@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random Geojson</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://raw.githubusercontent.com/bravecow/mapbox-gl-controls/master/theme.css" rel="stylesheet">
+    <link href='https://api.mapbox.com/mapbox-gl-js/v1.9.1/mapbox-gl.css' rel='stylesheet' />
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <link rel='stylesheet' href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.0.9/mapbox-gl-draw.css' type='text/css' />
+
+</head>
+
+<body>
+    <!-- preloader for start page  -->
+    <div class="loader" id="loader"></div>
+    <!-- main content  -->
+    <div id="page" style="display: hidden;">
+        <nav>
+            <div class="nav-wrapper #0277bd light-blue darken-3">
+                <a href="index.html" class="brand-logo "><i class="material-icons">blur_on</i>Random Geojson</a>
+                <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons ">menu</i></a>
+                <ul class="right hide-on-med-and-down">
+                    <li><a href="https://github.com/Grace-Amondi/ordinary_kriging" target="_blank"
+                            style="font-size: 18px;font-family: 'Patrick Hand', cursive;">Github</a></li>
+                    <li><a id="menu" class="waves-effect waves-light btn btn-floating #81d4fa light-blue lighten-3"
+                            onclick="$('.tap-target').tapTarget('open')"><i class="material-icons right">help</i></a>
+                    </li>
+                </ul>
+                <ul class="side-nav" id="mobile-demo">
+                    <li><a href="https://github.com/Grace-Amondi/ordinary_kriging" target="_blank">Github</a></li>
+                    <li><a id="menu" class="waves-effect waves-light btn btn-floating #81d4fa light-blue lighten-3"
+                            onclick="$('.tap-target').tapTarget('open')"><i class="material-icons right">help</i></a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+
+
+        <!-- Page Layout here -->
+        <div class="row">
+
+            <div class="col s12 m4 l4">
+
+                <div class="card #81d4fa light-blue lighten-1">
+                    <div class="card-content black-text">
+                        <p>Generate Random Geojson Data
+                        </p>
+                    </div>
+                    <div class="card-tabs ">
+                        <ul class="tabs tabs-fixed-width tabs-transparent ">
+                            <li class="tab"><a class="active" href="#upload">Upload</a></li>
+                            <li class="tab"><a href="#generate">Generate</a></li>
+                            <li class="tab"><a href="#download">Download</a></li>
+                        </ul>
+                    </div>
+                    <div class="card-content #81d4fa light-blue lighten-3">
+                        <div id="upload">
+                            <form id="uploadtrainForm">
+
+                                <div class="file-field input-field">
+                                    <div class="btn waves-effect waves-light #0277bd light-blue darken-3"
+                                        id="upload_polygon_button">
+                                        <span class=" white-text">Upload Polygon<i
+                                                class="material-icons right">attach_file</i></span>
+                                        <input id="upload_polygon" type="file" accept=".geojson">
+                                    </div>
+                                    <div class="file-path-wrapper">
+                                        <input class="file-path validate" id="file_name" type="text">
+                                    </div>
+                                </div>
+                                <p style="text-align: center;">OR</p>
+                                <div class="btn waves-effect waves-light #0277bd light-blue darken-3" id="drawbbox">
+                                    <span class="white-text">Draw Extent<i
+                                            class="material-icons right">crop_free</i></span>
+                                    <input id="bbox" type="button">
+                                </div>
+                            </form>
+                        </div>
+
+                        <div id="generate">
+                            <form>
+                                <select id="geometry" name="geometry" required="true">
+                                    <option disabled selected>Geometry Type</option>
+                                    <option value="copper">Point</option>
+                                    <option value="copper">Line</option>
+                                    <option value="copper">Polygon</option>
+
+                                </select>
+                                <div>
+                                    <p>
+                                        <input class="with-gap  black-text" type="number" name="pointCount"
+                                            id="pointCount" placeholder="Number of features" required>
+                                    </p>
+
+                                </div>
+                                <div class="btn waves-effect waves-light #0277bd light-blue darken-3"
+                                    id="addPropButton">
+                                    <span class="white-text">Add Property<i
+                                            class="material-icons right">add_box</i></span>
+                                    <input id="addProp" type="button">
+                                </div>
+                                <div class="row">
+                                    <div class="col s6 m6 l6">
+                                        <p>
+                                            <input class="with-gap" type="text" name="field_name" id="field_name"
+                                                required>
+                                        </p>
+                                    </div>
+                                    <div class="col s6 m6 l6">
+                                        <select id="variables" name="variable" required="true">
+                                            <option disabled selected>Option</option>
+                                            <!-- <option value="copper">Copper</option> -->
+                                        </select>
+                                    </div>
+
+                                </div>
+                                <div class="btn waves-effect waves-light #0277bd light-blue darken-3" id="drawbbox">
+                                    <span class="white-text">Generate<i
+                                            class="material-icons right">bubble_chart</i></span>
+                                    <input id="generate" type="button">
+                                </div>
+                            </form>
+
+
+                        </div>
+                        <div id="download">
+                            <form>
+                                <div class="btn waves-effect waves-light #0277bd light-blue darken-3 pulse" id="download">
+                                    <span class="white-text">Download<i class="material-icons right">file_download</i></span>
+                                    <input id="download" type="button">
+                                </div>
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col s12 m8 l8" id="map">
+                <a id="menu" onclick="$('.tap-target').tapTarget('open')"></a>
+
+                <!-- Tap Target Structure -->
+                <div class="tap-target #81d4fa light-blue lighten-3" data-activates="menu">
+                    <div class="tap-target-content black-text" id="info" style="text-align: right;">
+                        <h5 style="font-family: 'Patrick Hand', cursive;">My heading</h5>
+                        <p>My description
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+
+    <!-- Compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
+    <!-- Compiled and minified JavaScript -->
+    <!-- Make sure you put this AFTER Leaflet's CSS -->
+    <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script src='https://api.mapbox.com/mapbox-gl-js/v1.9.1/mapbox-gl.js'></script>
+    <script src='https://unpkg.com/@turf/turf/turf.min.js'></script>
+    <script src='https://api.mapbox.com/mapbox.js/plugins/turf/v2.0.2/turf.min.js'></script>
+    <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.0.9/mapbox-gl-draw.js"></script>
+    <script src="https://unpkg.com/togeojson@0.16.0"></script>
+    <script src="/js/index.js"></script>
+</body>
+
+</html>
