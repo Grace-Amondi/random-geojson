@@ -21,7 +21,8 @@
     "dotenv": "^8.2.0",
     "lodash.assign": "^4.2.0",
     "mapbox-gl": "^1.9.1",
-    "mapbox-gl-controls": "^1.6.2"
+    "mapbox-gl-controls": "^1.6.2",
+    "minimist": "^1.2.5"
   },
   "devDependencies": {
     "parcel-bundler": "^1.12.4"
