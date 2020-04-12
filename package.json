@@ -11,8 +11,13 @@
   "author": "Grace-Amondi",
   "license": "ISC",
   "dependencies": {
+    "@turf/boolean-contains": "^6.0.1",
+    "@turf/boolean-point-in-polygon": "^6.0.1",
+    "@turf/boolean-within": "^6.0.1",
     "@turf/helpers": "^6.1.4",
     "@turf/points-within-polygon": "^5.1.5",
+    "@turf/random": "^6.0.2",
+    "chance": "^1.1.4",
     "dotenv": "^8.2.0",
     "lodash.assign": "^4.2.0",
     "mapbox-gl": "^1.9.1",

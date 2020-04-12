@@ -4,7 +4,10 @@ import CompassControl from 'mapbox-gl-controls/lib/compass';
 import ZoomControl from 'mapbox-gl-controls/lib/zoom';
 import AroundControl from 'mapbox-gl-controls/lib/around'
 import pointsWithinPolygon from '@turf/points-within-polygon'
-import { point, featureCollection } from '@turf/helpers'
+import { point, featureCollection, polygon as turfpoly, lineString } from '@turf/helpers'
+import { randomPoint, randomPolygon, randomLineString } from "@turf/random"
+import booleanWithin from '@turf/boolean-within'
+import booleanPointInPolygon from '@turf/boolean-point-in-polygon'
 require('dotenv').config()
 
 // mobile nav bar 
@@ -59,38 +62,26 @@ function uploadPolygon() {
 
 function displayPolygonData(content) {
     if (content.features[0].geometry.type == 'Polygon') {
-        if (content.features.length == 1) {
-            map.addSource('Polygon Layer', {
-                type: 'geojson',
-                data: content
-            });
-            map.addLayer({
-                'id': 'Polygon Layer',
-                'type': 'fill',
-                'source': 'Polygon Layer',
-                'paint': {
-                    'fill-color': '#81d4fa',
-                    'fill-opacity': 0.5
-                }
-            });
-            var bbox = turf.extent(content);
-            map.fitBounds(bbox, {
-                padding: 20,
-                linear: false
-            });
+        // if (content.features.length == 1) {
+        map.addSource('Polygon Layer', {
+            type: 'geojson',
+            data: content
+        });
+        map.addLayer({
+            'id': 'Polygon Layer',
+            'type': 'fill',
+            'source': 'Polygon Layer',
+            'paint': {
+                'fill-color': '#81d4fa',
+                'fill-opacity': 0.5
+            }
+        });
+        var bbox = turf.extent(content);
+        map.fitBounds(bbox, {
+            padding: 20,
+            linear: false
+        });
 
-        } else {
-            toastr.options = {
-                "closeButton": false,
-                "timeOut": 7000,
-                "positionClass": "toast-top-right",
-                "showMethod": 'slideDown',
-                "hideMethod": 'slideUp',
-                "closeMethod": 'slideUp',
-            };
-            toastr.error(`<p  style="font-family: 'Patrick Hand', cursive;">Upload a single polygon feature</p>`);
-            console.log("single polygon");
-        }
     } else {
         toastr.options = {
             "closeButton": false,
@@ -103,8 +94,12 @@ function displayPolygonData(content) {
         toastr.error(`<p  style="font-family: 'Patrick Hand', cursive;">Please upload polygon features only</p>`);
         console.log("not polygon feature");
     }
+
     generate.addEventListener('click', function () {
-        addRandomToMap(content)
+
+        randomLineInPoly(content)
+
+
     })
 
 }
@@ -113,23 +108,14 @@ uploadInput.addEventListener('change', uploadPolygon, false)
 // define the function
 function randomPointInPoly(polygon) {
     var bounds = turf.extent(polygon);
-    console.log(bounds)
-    var x_min = bounds[0];
-    var x_max = bounds[2];
-    var y_min = bounds[1];
-    var y_max = bounds[3];
 
     var randomPointsArray = []
     var randomFinal = []
     for (let index = 0; index < 100; index++) {
-        var lat = y_min + (Math.random() * (y_max - y_min));
-        var lng = x_min + (Math.random() * (x_max - x_min));
-
-        var mypoint = point([lng, lat]);
-        // var poly = polygon.toGeoJSON();
-        // console.log(poly)
-        var inside = pointsWithinPolygon(mypoint, polygon);
-        randomPointsArray.push(inside)
+        var mypoint = randomPoint(1, { bbox: bounds })
+        var inside = booleanWithin(mypoint.features[0], polygon.features[0]);
+        var within = pointsWithinPolygon(mypoint.features[0], polygon.features[0])
+        randomPointsArray.push(within)
 
     }
     for (let i = 0; i < randomPointsArray.length; i++) {
@@ -138,7 +124,6 @@ function randomPointInPoly(polygon) {
             randomFinal.push(pointFeature)
         }
     }
-    console.log(randomFinal)
 
     var collection = featureCollection(
         randomFinal
@@ -163,24 +148,115 @@ function randomPointInPoly(polygon) {
 
 }
 
-function addRandomToMap(polygon) {
-    map.addSource('Random Points', {
+function randomPolyinPoly(polygon) {
+    var bounds = turf.extent(polygon);
+
+    var randomPolygonArray = []
+    var randomFinal = []
+    for (let index = 0; index < 100; index++) {
+        var mypolygon = randomPolygon(1, { bbox: bounds, num_vertices: 4, max_radial_length: 0.1 })
+
+        // i know this is hardcoding but relax...
+        var inside1 = booleanPointInPolygon(mypolygon.features[0].geometry.coordinates[0][0], polygon.features[0]);
+        var inside2 = booleanPointInPolygon(mypolygon.features[0].geometry.coordinates[0][1], polygon.features[0]);
+        var inside3 = booleanPointInPolygon(mypolygon.features[0].geometry.coordinates[0][2], polygon.features[0]);
+        var inside4 = booleanPointInPolygon(mypolygon.features[0].geometry.coordinates[0][3], polygon.features[0]);
+        var inside5 = booleanPointInPolygon(mypolygon.features[0].geometry.coordinates[0][4], polygon.features[0]);
+        if (inside1 && inside2 && inside3 && inside4 && inside5) {
+            randomPolygonArray.push(mypolygon)
+        }
+    }
+    console.log(randomPolygonArray)
+    for (let i = 0; i < randomPolygonArray.length; i++) {
+        if (randomPolygonArray[i].features.length > 0) {
+            var polygonFeature = turfpoly(randomPolygonArray[i].features[0].geometry.coordinates)
+            randomFinal.push(polygonFeature)
+        } else {
+            randomPolyinPoly(polygon)
+        }
+    }
+
+    var collection = featureCollection(
+        randomFinal
+    );
+    toastr.options = {
+        "closeButton": false,
+        "timeOut": 7000,
+        "positionClass": "toast-top-right",
+        "showMethod": 'slideDown',
+        "hideMethod": 'slideUp',
+        "closeMethod": 'slideUp',
+    };
+    toastr.success(`<p  style="font-family: 'Patrick Hand', cursive;">Successfully made ${collection.features.length} out of 100 features </p>`);
+    return addRandomToMap(collection)
+}
+
+function randomLineInPoly(polygon) {
+    var bounds = turf.extent(polygon);
+
+    var randomLineArray = []
+    var randomFinal = []
+    for (let index = 0; index < 10; index++) {
+        var myline = randomLineString(1, { bbox: bounds, num_vertices: 10, max_length: 0.005 })
+        console.log(myline)
+        // i know this is hardcoding but relax...
+        var inside1 = booleanPointInPolygon(myline.features[0].geometry.coordinates[0], polygon.features[0]);
+        var inside2 = booleanPointInPolygon(myline.features[0].geometry.coordinates[1], polygon.features[0]);
+        var inside3 = booleanPointInPolygon(myline.features[0].geometry.coordinates[2], polygon.features[0]);
+        var inside4 = booleanPointInPolygon(myline.features[0].geometry.coordinates[3], polygon.features[0]);
+        console.log(myline.features[0].geometry.coordinates[0])
+        if (inside1 && inside2 && inside3 && inside4) {
+
+            randomLineArray.push(myline)
+        }
+    }
+    for (let i = 0; i < randomLineArray.length; i++) {
+        if (randomLineArray[0].features.length > 0) {
+            var lineFeature = lineString(randomLineArray[i].features[0].geometry.coordinates)
+            randomFinal.push(lineFeature)
+        } else {
+            randomPolyinPoly(polygon)
+        }
+
+    }
+
+    var collection = featureCollection(
+        randomFinal
+    );
+
+    console.log(JSON.stringify(collection))
+    toastr.options = {
+        "closeButton": false,
+        "timeOut": 7000,
+        "positionClass": "toast-top-right",
+        "showMethod": 'slideDown',
+        "hideMethod": 'slideUp',
+        "closeMethod": 'slideUp',
+    };
+    toastr.success(`<p  style="font-family: 'Patrick Hand', cursive;">Successfully made ${collection.features.length} out of 100 features </p>`);
+    return addRandomToMap(collection)
+
+}
+
+function addRandomToMap(dataset) {
+    map.addSource('Random Line', {
         type: 'geojson',
-        data: randomPointInPoly(polygon)
+        data: dataset
     });
     map.addLayer({
-        'id': 'Random Points',
-        'type': 'circle',
-        'source': 'Random Points',
+        'id': 'Random Line',
+        'type': 'line',
+        'source': 'Random Line',
         'paint': {
-            // make circles larger as the user zooms from z12 to z22
-            'circle-radius': 9.75,
-            // color circles by ethnicity, using a match expression
-            // https://docs.mapbox.com/mapbox-gl-js/style-spec/#expressions-match
-            'circle-color': '#01579b',
-            'circle-stroke-color': 'white',
-            'circle-stroke-width': 2
+            'line-width': 3,
+            'line-color': 'black'
         }
     });
+    var bbox = turf.extent(dataset);
+    map.fitBounds(bbox, {
+        padding: 20,
+        linear: false
+    });
+
 }
 
