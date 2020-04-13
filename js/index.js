@@ -8,6 +8,9 @@ import { point, featureCollection, polygon as turfpoly, lineString } from '@turf
 import { randomPoint, randomPolygon, randomLineString } from "@turf/random"
 import booleanWithin from '@turf/boolean-within'
 import booleanPointInPolygon from '@turf/boolean-point-in-polygon'
+import { createForm } from 'final-form'
+import arrayMutators from 'final-form-arrays'
+
 require('dotenv').config()
 
 // mobile nav bar 
@@ -37,14 +40,22 @@ map.addControl(new ZoomControl(), 'top-left');
 map.addControl(new RulerControl(), 'top-left');
 map.addControl(new AroundControl(), 'top-left')
 map.addControl(new CompassControl(), 'top-left');
+const onSubmit = values => console.log(JSON.stringify(values))
 
+// Create Form
+const form = createForm({
+    mutators: { ...arrayMutators },
+    onSubmit
+})
 // initialize dropdown 
-$('select').material_select();
+// $('select').material_select();
 $("select[required]").css({ display: "block", height: 0, padding: 0, width: 0, position: 'absolute' });
 var uploadInput = document.getElementById("upload_polygon");
 var bbox = document.getElementById('bbox')
 var generate = document.getElementById("generate")
-
+var attributeInfo = document.getElementById("attributeInfo")
+var addProp = document.getElementById('addProp')
+var variables = document.getElementById('variables')
 // upload polygon 
 function uploadPolygon() {
     // upload datasets
@@ -95,17 +106,18 @@ function displayPolygonData(content) {
         console.log("not polygon feature");
     }
 
-    generate.addEventListener('click', function () {
+    // TODO: UNCOMMENT THIS
+    // generate.addEventListener('click', function () {
 
-        randomLineInPoly(content)
+    //     randomLineInPoly(content)
 
 
-    })
+    // })
 
 }
 
 uploadInput.addEventListener('change', uploadPolygon, false)
-// define the function
+// find random points within user defined boundary 
 function randomPointInPoly(polygon) {
     var bounds = turf.extent(polygon);
 
@@ -148,6 +160,7 @@ function randomPointInPoly(polygon) {
 
 }
 
+// find random polygons within user defined boundary 
 function randomPolyinPoly(polygon) {
     var bounds = turf.extent(polygon);
 
@@ -191,6 +204,7 @@ function randomPolyinPoly(polygon) {
     return addRandomToMap(collection)
 }
 
+// find random line within user defined boundary 
 function randomLineInPoly(polygon) {
     var bounds = turf.extent(polygon);
 
@@ -237,7 +251,7 @@ function randomLineInPoly(polygon) {
     return addRandomToMap(collection)
 
 }
-
+// add random data to map
 function addRandomToMap(dataset) {
     map.addSource('Random Line', {
         type: 'geojson',
@@ -260,3 +274,77 @@ function addRandomToMap(dataset) {
 
 }
 
+// faker
+var faker = require('faker');
+
+let OPTIONS = {};
+
+let modules = Object.keys(faker);
+
+modules = modules.sort();
+modules.forEach(function (module) {
+    var ignore = ["locale", "locales", "localeFallback", "definitions", "fake"];
+    if (ignore.indexOf(module) !== -1) {
+        return;
+    }
+    OPTIONS[module] = Object.keys(faker[module]);
+});
+for (var index = 0; index < Object.keys(OPTIONS).length; index++) {
+    $('#variables').append("<option value='" + Object.keys(OPTIONS)[index] + "'>" + Object.keys(OPTIONS)[index] + "</option>")
+    $('select').material_select()
+}
+console.log(OPTIONS)
+
+// When an option is changed, search the above for matching choices
+$('#variables').on('change', function () {
+    // Set selected option as variable
+    var selectValue = $(this).val();
+    console.log(OPTIONS[selectValue])
+    // Empty the target field
+    $('#variablesOption').empty();
+
+    // For each chocie in the selected option
+    for (var i = 0; i < OPTIONS[selectValue].length; i++) {
+        // Output choice in the target field
+        $('#variablesOption').append("<option value='" + OPTIONS[selectValue][i] + "'>" + OPTIONS[selectValue][i] + "</option>");
+        $('select').material_select()
+    }
+});
+
+$('select').material_select()
+
+// generate.addEventListener('click',function () {
+//     var userInput = $("#generateForm").serializeArray()
+//     console.log(userInput)
+// })
+
+// var selectionCounter = 0
+// function cloneSelect() {
+
+//     var clone = attributeInfo.cloneNode(true)
+//     //   var id = attributeInfo.getAttribute("id") + selectionCounter++
+
+//     //   clone.id = id
+//     //   clone.setAttribute("id", id)
+//     document.getElementById("attributeContainer").appendChild(clone)
+//     for (var index = 0; index < Object.keys(OPTIONS).length; index++) {
+//         $('#variables').append("<option value='" + Object.keys(OPTIONS)[index] + "'>" + Object.keys(OPTIONS)[index] + "</option>")
+//         $('select').material_select()
+//     }
+// }
+// addProp.addEventListener('click', function () {
+//     cloneSelect()
+
+//     $('select').material_select()
+
+// })
+
+
+
+var names=document.getElementsByName('variable');
+console.log(names)
+for(var key=0; key < names.length; key++)  {
+    console.log(names[key].value);
+
+    //your code goes here
+}
