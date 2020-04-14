@@ -78,6 +78,12 @@ drawbbox.addEventListener('click', function () {
         };
         toastr.warning(`<p  style="font-family: 'Patrick Hand', cursive;">Extent deleted successfully</p>`);
         draw.deleteAll()
+        map.removeLayer('BBOX Layer')
+        map.removeSource('BBOX Layer')
+        map.fitBounds([0,90,0,-90], {
+            padding: {bottom:80},
+            linear: false
+        });
     } else {
         drawbbox.classList.remove('green')
         drawbbox.classList.add('red')
@@ -86,6 +92,7 @@ drawbbox.addEventListener('click', function () {
     }
 })
 
+// when bounding box is drawn 
 map.on('draw.create', function () {
     toastr.options = {
         "closeButton": false,
@@ -97,10 +104,11 @@ map.on('draw.create', function () {
     };
     toastr.success(`<p  style="font-family: 'Patrick Hand', cursive;">Extent created successfully</p>`);
     var bboxExtent = draw.getAll()
-    content(bboxExtent)
+    retrieveBbox(bboxExtent)
 });
 
-map.on('draw.update',function () {
+// when bounding box is updated
+map.on('draw.update', function () {
     toastr.options = {
         "closeButton": false,
         "timeOut": 7000,
@@ -111,11 +119,30 @@ map.on('draw.update',function () {
     };
     toastr.success(`<p  style="font-family: 'Patrick Hand', cursive;">Extent updated successfully</p>`);
     var bboxExtent = draw.getAll()
-    content(bboxExtent)
+    retrieveBbox(bboxExtent)
 })
 
-function content(c) {
-    console.log(c)
+// retrieve bounding box polygon from map 
+function retrieveBbox(data) {
+    // if (content.features.length == 1) {
+    map.addSource('BBOX Layer', {
+        type: 'geojson',
+        data: data
+    });
+    map.addLayer({
+        'id': 'BBOX Layer',
+        'type': 'fill',
+        'source': 'BBOX Layer',
+        'paint': {
+            'fill-color': '#81d4fa',
+            'fill-opacity': 0.5
+        }
+    });
+    var bbox = turf.extent(data);
+    map.fitBounds(bbox, {
+        padding: 50,
+        linear: false
+    });
 }
 
 // upload polygon 
