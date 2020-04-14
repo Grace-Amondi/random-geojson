@@ -1,4 +1,3 @@
-// import mapboxgl from 'mapbox-gl'
 import RulerControl from 'mapbox-gl-controls/lib/ruler';
 import CompassControl from 'mapbox-gl-controls/lib/compass';
 import ZoomControl from 'mapbox-gl-controls/lib/zoom';
@@ -8,10 +7,19 @@ import { point, featureCollection, polygon as turfpoly, lineString } from '@turf
 import { randomPoint, randomPolygon, randomLineString } from "@turf/random"
 import booleanWithin from '@turf/boolean-within'
 import booleanPointInPolygon from '@turf/boolean-point-in-polygon'
-import { createForm } from 'final-form'
-import arrayMutators from 'final-form-arrays'
+import MapboxDraw from '@mapbox/mapbox-gl-draw'
+import DrawRectangle from 'mapbox-gl-draw-rectangle-mode';
+
+import '@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css'
 
 require('dotenv').config()
+
+var uploadInput = document.getElementById("upload_polygon");
+var drawbbox = document.getElementById('drawbbox')
+var generate = document.getElementById("generate")
+var attributeInfo = document.getElementById("attributeInfo")
+var addProp = document.getElementById('addProp')
+var variables = document.getElementById('variables')
 
 // mobile nav bar 
 $(".button-collapse").sideNav();
@@ -35,6 +43,15 @@ var map = new mapboxgl.Map({
     // zoom: 12
 });
 
+var draw = new MapboxDraw({
+    displayControlsDefault: false,
+    modes: {
+        ...MapboxDraw.modes,
+        'draw_rectangle': DrawRectangle
+    }
+});
+map.addControl(draw, 'top-left');
+
 // map controls 
 map.addControl(new ZoomControl(), 'top-left');
 map.addControl(new RulerControl(), 'top-left');
@@ -42,20 +59,65 @@ map.addControl(new AroundControl(), 'top-left')
 map.addControl(new CompassControl(), 'top-left');
 const onSubmit = values => console.log(JSON.stringify(values))
 
-// Create Form
-const form = createForm({
-    mutators: { ...arrayMutators },
-    onSubmit
-})
 // initialize dropdown 
-// $('select').material_select();
 $("select[required]").css({ display: "block", height: 0, padding: 0, width: 0, position: 'absolute' });
-var uploadInput = document.getElementById("upload_polygon");
-var bbox = document.getElementById('bbox')
-var generate = document.getElementById("generate")
-var attributeInfo = document.getElementById("attributeInfo")
-var addProp = document.getElementById('addProp')
-var variables = document.getElementById('variables')
+
+
+drawbbox.addEventListener('click', function () {
+    if (document.getElementById('drawSpan').innerHTML == "CANCEL") {
+        drawbbox.classList.remove('red')
+        drawbbox.classList.add('green')
+        document.getElementById('drawSpan').innerHTML = "DRAW EXTENT"
+        toastr.options = {
+            "closeButton": false,
+            "timeOut": 7000,
+            "positionClass": "toast-top-right",
+            "showMethod": 'slideDown',
+            "hideMethod": 'slideUp',
+            "closeMethod": 'slideUp',
+        };
+        toastr.warning(`<p  style="font-family: 'Patrick Hand', cursive;">Extent deleted successfully</p>`);
+        draw.deleteAll()
+    } else {
+        drawbbox.classList.remove('green')
+        drawbbox.classList.add('red')
+        document.getElementById('drawSpan').innerHTML = "CANCEL"
+        draw.changeMode('draw_rectangle');
+    }
+})
+
+map.on('draw.create', function () {
+    toastr.options = {
+        "closeButton": false,
+        "timeOut": 7000,
+        "positionClass": "toast-top-right",
+        "showMethod": 'slideDown',
+        "hideMethod": 'slideUp',
+        "closeMethod": 'slideUp',
+    };
+    toastr.success(`<p  style="font-family: 'Patrick Hand', cursive;">Extent created successfully</p>`);
+    var bboxExtent = draw.getAll()
+    content(bboxExtent)
+});
+
+map.on('draw.update',function () {
+    toastr.options = {
+        "closeButton": false,
+        "timeOut": 7000,
+        "positionClass": "toast-top-right",
+        "showMethod": 'slideDown',
+        "hideMethod": 'slideUp',
+        "closeMethod": 'slideUp',
+    };
+    toastr.success(`<p  style="font-family: 'Patrick Hand', cursive;">Extent updated successfully</p>`);
+    var bboxExtent = draw.getAll()
+    content(bboxExtent)
+})
+
+function content(c) {
+    console.log(c)
+}
+
 // upload polygon 
 function uploadPolygon() {
     // upload datasets
@@ -312,39 +374,3 @@ $('#variables').on('change', function () {
 });
 
 $('select').material_select()
-
-// generate.addEventListener('click',function () {
-//     var userInput = $("#generateForm").serializeArray()
-//     console.log(userInput)
-// })
-
-// var selectionCounter = 0
-// function cloneSelect() {
-
-//     var clone = attributeInfo.cloneNode(true)
-//     //   var id = attributeInfo.getAttribute("id") + selectionCounter++
-
-//     //   clone.id = id
-//     //   clone.setAttribute("id", id)
-//     document.getElementById("attributeContainer").appendChild(clone)
-//     for (var index = 0; index < Object.keys(OPTIONS).length; index++) {
-//         $('#variables').append("<option value='" + Object.keys(OPTIONS)[index] + "'>" + Object.keys(OPTIONS)[index] + "</option>")
-//         $('select').material_select()
-//     }
-// }
-// addProp.addEventListener('click', function () {
-//     cloneSelect()
-
-//     $('select').material_select()
-
-// })
-
-
-
-var names=document.getElementsByName('variable');
-console.log(names)
-for(var key=0; key < names.length; key++)  {
-    console.log(names[key].value);
-
-    //your code goes here
-}

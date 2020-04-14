@@ -11,6 +11,7 @@
   "author": "Grace-Amondi",
   "license": "ISC",
   "dependencies": {
+    "@mapbox/mapbox-gl-draw": "^1.1.2",
     "@turf/boolean-contains": "^6.0.1",
     "@turf/boolean-point-in-polygon": "^6.0.1",
     "@turf/boolean-within": "^6.0.1",
@@ -25,6 +26,7 @@
     "lodash.assign": "^4.2.0",
     "mapbox-gl": "^1.9.1",
     "mapbox-gl-controls": "^1.6.2",
+    "mapbox-gl-draw-rectangle-mode": "^1.0.4",
     "minimist": "^1.2.5"
   },
   "devDependencies": {
