@@ -26,7 +26,7 @@ window.onload = function () {
 }
 
 // map container //replace with your mapbox access token
-mapboxgl.accessToken = 'pk.eyJ1IjoiZ3JhY2VhbW9uZGkiLCJhIjoiY2s4dGphcGQwMDBhcjNmcnkzdGk3MnlrZCJ9.54r40Umo0l3dHseEbrQpUg'
+mapboxgl.accessToken =process.env.MAPBOX_ACCESS_TOKEN
 var map = new mapboxgl.Map({
     container: 'map',
     style: 'mapbox://styles/graceamondi/ck1p6wqfs0vj81cqwbikdv87j',
@@ -248,7 +248,10 @@ function displayPolygonData(content) {
 
 }
 
-uploadInput.addEventListener('change', uploadPolygon, false)
+uploadInput.addEventListener('change',function () {
+    uploadPolygon()
+    document.getElementById("generateButton").classList.remove('disabled')
+} , false)
 
 var variableArray = ['bool', 'floating', 'integer', 'age', 'first', 'last', 'gender', 'animal', 'color', 'company', 'profession', 'address', 'altitude', 'phone', 'zip', 'date']
 variableArray.forEach(opt => {

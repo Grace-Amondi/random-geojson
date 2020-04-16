@@ -6,7 +6,7 @@
   "scripts": {
     "start": "parcel index.html",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "parcel build --public-url . index.html"
+    "build": "rm -rf dist && parcel build --public-url . index.html && cp CNAME dist && cd dist/ && rm *.map && surge ./dist"
   },
   "author": "Grace-Amondi",
   "license": "ISC",
@@ -23,6 +23,7 @@
     "faker": "^4.1.0",
     "final-form": "^4.19.1",
     "final-form-arrays": "^3.0.2",
+    "fs": "0.0.1-security",
     "lodash.assign": "^4.2.0",
     "mapbox-gl": "^1.9.1",
     "mapbox-gl-controls": "^1.6.2",
