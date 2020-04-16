@@ -72,9 +72,8 @@
                                 <div class="file-field input-field">
                                     <div class="btn waves-effect waves-light #0277bd light-blue darken-3"
                                         id="upload_polygon_button">
-                                        <span class=" white-text">Upload Polygon<i
-                                                class="material-icons right">attach_file</i></span>
-                                        <input id="upload_polygon" type="file" accept=".geojson">
+                                        <span class=" white-text" id="uploadSpan">Upload Polygon</span>
+                                        <input id="upload_polygon" type="file" accept=".geojson" value="">
                                     </div>
                                     <div class="file-path-wrapper">
                                         <input class="file-path validate" id="file_name" type="text">
@@ -119,7 +118,7 @@
                                 <div class="btn waves-effect waves-light #0277bd light-blue darken-3 disabled"
                                     id="generateButton">
                                     <span class="white-text"><i class="material-icons right">bubble_chart</i></span>
-                                    <input id="generate" type="submit" value="Generate">
+                                    <input id="generateInput" type="submit" value="GENERATE">
                                 </div>
                             </form>
 

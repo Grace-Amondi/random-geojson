@@ -173,7 +173,6 @@ var randomData = function () {
         var collection = featureCollection(
             randomFinal
         );
-        console.log(collection)
         toastr.options = {
             "closeButton": false,
             "timeOut": 7000,
@@ -278,7 +277,6 @@ var randomData = function () {
             randomFinal
         );
 
-        console.log(JSON.stringify(collection))
         toastr.options = {
             "closeButton": false,
             "timeOut": 7000,
@@ -311,7 +309,6 @@ var randomData = function () {
         map.on('click', 'Random Line', function (e) {
             for (var m = 0; m < Object.keys(e.features[0].properties).length; m++) {
                 description[m] = `${Object.keys(e.features[0].properties)[m]}:${Object.values(e.features[0].properties)[m]}<br>`;
-
 
             }
             new mapboxgl.Popup()
