@@ -24,12 +24,16 @@ var randomData = function () {
         var randomPointsArray = []
         var randomFinal = []
         for (let index = 0; index < featureCount; index++) {
-            var mypoint = randomPoint(1, { bbox: bounds })
-            var inside = booleanWithin(mypoint.features[0], polygon.features[0]);
-            var within = pointsWithinPolygon(mypoint.features[0], polygon.features[0])
-            if (inside) {
-                randomPointsArray.push(within)
-            }
+            let mypoint
+            let within
+            let inside = false
+            do {
+                mypoint = randomPoint(1, { bbox: bounds })
+                inside = booleanWithin(mypoint.features[0], polygon.features[0]);
+                within = pointsWithinPolygon(mypoint.features[0], polygon.features[0])
+            } while (!inside);
+            inside && randomPointsArray.push(within)
+
         }
         for (let i = 0; i < randomPointsArray.length; i++) {
             var variablesObj = new Object();
@@ -116,8 +120,8 @@ var randomData = function () {
             map.getCanvas().style.cursor = 'default';
         });
 
-        downloadButton.addEventListener('click',function () {
-            downloadPredictions(collection,'points')
+        downloadButton.addEventListener('click', function () {
+            downloadPredictions(collection, 'points')
         })
     };
 
@@ -128,17 +132,25 @@ var randomData = function () {
         var randomPolygonArray = []
         var randomFinal = []
         for (let index = 0; index < featureCount; index++) {
-            var mypolygon = randomPolygon(1, { bbox: bounds, num_vertices: 4, max_radial_length: 0.1 })
+            let inside1 = false
+            let inside2 = false
+            let inside3 = false
+            let inside4 = false
+            let inside5 = false
+            let mypolygon
+            do {
+                mypolygon = randomPolygon(1, { bbox: bounds, num_vertices: 4, max_radial_length: 0.06 })
 
-            // i know this is hardcoding but relax...
-            var inside1 = booleanPointInPolygon(mypolygon.features[0].geometry.coordinates[0][0], polygon.features[0]);
-            var inside2 = booleanPointInPolygon(mypolygon.features[0].geometry.coordinates[0][1], polygon.features[0]);
-            var inside3 = booleanPointInPolygon(mypolygon.features[0].geometry.coordinates[0][2], polygon.features[0]);
-            var inside4 = booleanPointInPolygon(mypolygon.features[0].geometry.coordinates[0][3], polygon.features[0]);
-            var inside5 = booleanPointInPolygon(mypolygon.features[0].geometry.coordinates[0][4], polygon.features[0]);
-            if (inside1 && inside2 && inside3 && inside4 && inside5) {
-                randomPolygonArray.push(mypolygon)
-            }
+                // i know this is hardcoding but relax...
+                inside1 = booleanPointInPolygon(mypolygon.features[0].geometry.coordinates[0][0], polygon.features[0]);
+                inside2 = booleanPointInPolygon(mypolygon.features[0].geometry.coordinates[0][1], polygon.features[0]);
+                inside3 = booleanPointInPolygon(mypolygon.features[0].geometry.coordinates[0][2], polygon.features[0]);
+                inside4 = booleanPointInPolygon(mypolygon.features[0].geometry.coordinates[0][3], polygon.features[0]);
+                inside5 = booleanPointInPolygon(mypolygon.features[0].geometry.coordinates[0][4], polygon.features[0]);
+
+            } while (!inside1 && !inside2 && !inside3 && !inside4 && !inside5);
+            inside1 && inside2 && inside3 && inside4 && inside5 && randomPolygonArray.push(mypolygon)
+
         }
         for (let i = 0; i < randomPolygonArray.length; i++) {
             var variablesObj = new Object();
@@ -171,7 +183,7 @@ var randomData = function () {
             "closeMethod": 'slideUp',
         };
 
-        toastr.success(`<p  style="font-family: 'Patrick Hand', cursive;">Successfully made ${collection.features.length} out of 100 features </p>`);
+        toastr.success(`<p  style="font-family: 'Patrick Hand', cursive;">Successfully made ${collection.features.length+1} out of ${featureCount} features </p>`);
 
         map.addSource('Random Polygon', {
             type: 'geojson',
@@ -195,13 +207,13 @@ var randomData = function () {
         map.on('click', 'Random Polygon', function (e) {
             for (var m = 0; m < Object.keys(e.features[0].properties).length; m++) {
                 description[m] = `${Object.keys(e.features[0].properties)[m]}:${Object.values(e.features[0].properties)[m]}<br>`;
-                
+
 
             }
             new mapboxgl.Popup()
-            .setLngLat(e.lngLat)
-            .setHTML(description)
-            .addTo(map);
+                .setLngLat(e.lngLat)
+                .setHTML(description)
+                .addTo(map);
 
         });
 
@@ -214,8 +226,8 @@ var randomData = function () {
         map.on('mouseleave', 'Random Polygon', function () {
             map.getCanvas().style.cursor = 'default';
         });
-        downloadButton.addEventListener('click',function () {
-            downloadPredictions(collection,'polygons')
+        downloadButton.addEventListener('click', function () {
+            downloadPredictions(collection, 'polygons')
         })
 
     };
@@ -227,16 +239,21 @@ var randomData = function () {
         var randomLineArray = []
         var randomFinal = []
         for (let index = 0; index < featureCount; index++) {
-            var myline = randomLineString(1, { bbox: bounds, num_vertices: 20, max_length: 0.005, max_rotation: Math.PI / 4 })
-            // i know this is hardcoding but relax...
-            var inside1 = booleanPointInPolygon(myline.features[0].geometry.coordinates[0], polygon.features[0]);
-            var inside2 = booleanPointInPolygon(myline.features[0].geometry.coordinates[1], polygon.features[0]);
-            var inside3 = booleanPointInPolygon(myline.features[0].geometry.coordinates[2], polygon.features[0]);
-            var inside4 = booleanPointInPolygon(myline.features[0].geometry.coordinates[3], polygon.features[0]);
-            if (inside1 && inside2 && inside3 && inside4 ) {
+            let inside1 = false
+            let inside2 = false
+            let inside3 = false
+            let inside4 = false
+            let myline
+            do {
+                myline = randomLineString(1, { bbox: bounds, num_vertices: 20, max_length: 0.005, max_rotation: Math.PI / 4 })
+                inside1 = booleanPointInPolygon(myline.features[0].geometry.coordinates[0], polygon.features[0]);
+                inside2 = booleanPointInPolygon(myline.features[0].geometry.coordinates[1], polygon.features[0]);
+                inside3 = booleanPointInPolygon(myline.features[0].geometry.coordinates[2], polygon.features[0]);
+                inside4 = booleanPointInPolygon(myline.features[0].geometry.coordinates[3], polygon.features[0]);
 
-                randomLineArray.push(myline)
-            }
+
+            } while (!inside1 && !inside2 && !inside3 && !inside4);
+            inside1 && inside2 && inside3 && inside4 && randomLineArray.push(myline)
         }
         for (let i = 0; i < randomLineArray.length; i++) {
             var variablesObj = new Object();
@@ -248,11 +265,11 @@ var randomData = function () {
 
                 }
             })
-            if (randomLineArray[0].features.length > 0 ) {
+            if (randomLineArray[0].features.length > 0) {
                 var lineFeature = lineString(randomLineArray[i].features[0].geometry.coordinates, variablesObj)
                 randomFinal.push(lineFeature)
             } else {
-                randomLineInPoly(polygon,map, featureCount, userInput)
+                randomLineInPoly(polygon, map, featureCount, userInput)
             }
 
         }
@@ -294,13 +311,13 @@ var randomData = function () {
         map.on('click', 'Random Line', function (e) {
             for (var m = 0; m < Object.keys(e.features[0].properties).length; m++) {
                 description[m] = `${Object.keys(e.features[0].properties)[m]}:${Object.values(e.features[0].properties)[m]}<br>`;
-                
+
 
             }
             new mapboxgl.Popup()
-            .setLngLat(e.lngLat)
-            .setHTML(description)
-            .addTo(map);
+                .setLngLat(e.lngLat)
+                .setHTML(description)
+                .addTo(map);
 
         });
 
@@ -313,8 +330,8 @@ var randomData = function () {
         map.on('mouseleave', 'Random Line', function () {
             map.getCanvas().style.cursor = 'default';
         });
-        downloadButton.addEventListener('click',function () {
-            downloadPredictions(collection,'lines')
+        downloadButton.addEventListener('click', function () {
+            downloadPredictions(collection, 'lines')
         })
 
     };
