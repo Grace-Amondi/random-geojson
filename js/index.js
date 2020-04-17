@@ -143,48 +143,54 @@ function retrieveBbox(data) {
     // generate random data on form submit 
     document.getElementById("generateForm").addEventListener('submit', function () {
         // check if button state is in cancel mode 
-        if (document.getElementById('generateInput').value === 'CANCEL') {
-            // change button state to generate mode 
-            document.getElementById('generateInput').value = 'GENERATE'
+        // if (document.getElementById('generateInput').value === 'CANCEL') {
+        //     // change button state to generate mode 
+        //     document.getElementById('generateInput').value = 'GENERATE'
 
-            // remove added layer 
-            if (map.getStyle().layers.slice(-1)[0].id === 'Random Point') {
-                map.removeLayer('Random Point');
-                map.removeSource('Random Point')
-            } else if (map.getStyle().layers.slice(-1)[0].id === 'Random Line') {
-                map.removeLayer('Random Line');
-                map.removeSource('Random Line')
-            } else if (map.getStyle().layers.slice(-1)[0].id === 'Random Polygon') {
-                map.removeLayer('Random Polygon');
-                map.removeSource('Random Polygon')
-            } else {
-                console.log("nothing added")
-            }
+        //     // remove added layer 
+        //     if (map.getStyle().layers.slice(-1)[0].id === 'Random Point') {
+        //         map.removeLayer('Random Point');
+        //         map.removeSource('Random Point')
+        //     } else if (map.getStyle().layers.slice(-1)[0].id === 'Random Line') {
+        //         map.removeLayer('Random Line');
+        //         map.removeSource('Random Line')
+        //     } else if (map.getStyle().layers.slice(-1)[0].id === 'Random Polygon') {
+        //         map.removeLayer('Random Polygon');
+        //         map.removeSource('Random Polygon')
+        //     } else {
+        //         console.log("nothing added")
+        //     }
 
+        // } else {
+        //     // change button state to cancel mode instead
+        //     document.getElementById('generateInput').value = 'CANCEL'
+        // retrieve form data 
+        var userInput = $("#generateForm").serializeArray();
+        // generate random data based on selected geometry 
+        if (userInput[0].value === 'Point') {
+            randomData.randomPointInPoly(data, map, userInput[1].value, userInput)
+        } else if (userInput[0].value === 'Line') {
+            randomData.randomLineInPoly(data, map, userInput[1].value, userInput)
+        } else if (userInput[0].value === 'Polygon') {
+            randomData.randomPolyinPoly(data, map, userInput[1].value, userInput)
         } else {
-            // change button state to cancel mode instead
-            document.getElementById('generateInput').value = 'CANCEL'
-            // retrieve form data 
-            var userInput = $("#generateForm").serializeArray();
-            // create random data based on geometry selected 
-            if (userInput[0].value === 'Point') {
-                randomData.randomPointInPoly(data, map, userInput[1].value, userInput)
-            } else if (userInput[0].value === 'Line') {
-                randomData.randomLineInPoly(data, map, userInput[1].value, userInput)
-            } else if (userInput[0].value === 'Polygon') {
-                randomData.randomPolyinPoly(data, map, userInput[1].value, userInput)
-            } else {
-                toastr.options = {
-                    "closeButton": false,
-                    "timeOut": 7000,
-                    "positionClass": "toast-top-right",
-                    "showMethod": 'slideDown',
-                    "hideMethod": 'slideUp',
-                    "closeMethod": 'slideUp',
-                };
-                toastr.error(`<p  style="font-family: 'Patrick Hand', cursive;">Something went wrong</p>`);
-            }
+            toastr.options = {
+                "closeButton": false,
+                "timeOut": 7000,
+                "positionClass": "toast-top-right",
+                "showMethod": 'slideDown',
+                "hideMethod": 'slideUp',
+                "closeMethod": 'slideUp',
+            };
+            toastr.error(`<p  style="font-family: 'Patrick Hand', cursive;">Something went wrong</p>`);
         }
+        document.getElementById('generateButton').classList.add('disabled')
+        document.getElementById('downloadButton').classList.remove('disabled')
+        document.getElementById("upload_polygon_button").classList.add('disabled')
+
+        document.getElementById("remove_polygon_button").classList.add('disabled')
+
+        // }
     })
     // add bbox layer and source 
     map.addSource('BBOX Layer', {
@@ -224,47 +230,52 @@ function uploadPolygon() {
         // generate random data on form submit 
         document.getElementById("generateForm").addEventListener('submit', function () {
             // is state in cancel mode 
-            if (document.getElementById('generateInput').value === 'CANCEL') {
-                document.getElementById('generateInput').value = 'GENERATE'
+            // if (document.getElementById('generateInput').value === 'CANCEL') {
+            //     document.getElementById('generateInput').value = 'GENERATE'
 
-                // remove added layer 
-                if (map.getStyle().layers.slice(-1)[0].id === 'Random Point') {
-                    map.removeLayer('Random Point');
-                    map.removeSource('Random Point')
-                } else if (map.getStyle().layers.slice(-1)[0].id === 'Random Line') {
-                    map.removeLayer('Random Line');
-                    map.removeSource('Random Line')
-                } else if (map.getStyle().layers.slice(-1)[0].id === 'Random Polygon') {
-                    map.removeLayer('Random Polygon');
-                    map.removeSource('Random Polygon')
-                } else {
-                    console.log("nothing added")
-                }
+            //     // remove added layer 
+            //     if (map.getStyle().layers.slice(-1)[0].id === 'Random Point') {
+            //         map.removeLayer('Random Point');
+            //         map.removeSource('Random Point')
+            //     } else if (map.getStyle().layers.slice(-1)[0].id === 'Random Line') {
+            //         map.removeLayer('Random Line');
+            //         map.removeSource('Random Line')
+            //     } else if (map.getStyle().layers.slice(-1)[0].id === 'Random Polygon') {
+            //         map.removeLayer('Random Polygon');
+            //         map.removeSource('Random Polygon')
+            //     } else {
+            //         console.log("nothing added")
+            //     }
+            // } else {
+            // is state in generate mode 
+            // document.getElementById('generateInput').value = 'CANCEL'
+            // retrieve form data 
+            var userInput = $("#generateForm").serializeArray();
+            // generate random data based on selected geometry 
+            if (userInput[0].value === 'Point') {
+                randomData.randomPointInPoly(polygon, map, userInput[1].value, userInput)
+            } else if (userInput[0].value === 'Line') {
+                randomData.randomLineInPoly(polygon, map, userInput[1].value, userInput)
+            } else if (userInput[0].value === 'Polygon') {
+                randomData.randomPolyinPoly(polygon, map, userInput[1].value, userInput)
             } else {
-                // is state in generate mode 
-                document.getElementById('generateInput').value = 'CANCEL'
-                // retrieve form data 
-                var userInput = $("#generateForm").serializeArray();
-
-                // generate random data based on selected geometry 
-                if (userInput[0].value === 'Point') {
-                    randomData.randomPointInPoly(polygon, map, userInput[1].value, userInput)
-                } else if (userInput[0].value === 'Line') {
-                    randomData.randomLineInPoly(polygon, map, userInput[1].value, userInput)
-                } else if (userInput[0].value === 'Polygon') {
-                    randomData.randomPolyinPoly(polygon, map, userInput[1].value, userInput)
-                } else {
-                    toastr.options = {
-                        "closeButton": false,
-                        "timeOut": 7000,
-                        "positionClass": "toast-top-right",
-                        "showMethod": 'slideDown',
-                        "hideMethod": 'slideUp',
-                        "closeMethod": 'slideUp',
-                    };
-                    toastr.error(`<p  style="font-family: 'Patrick Hand', cursive;">Something went wrong</p>`);
-                }
+                toastr.options = {
+                    "closeButton": false,
+                    "timeOut": 7000,
+                    "positionClass": "toast-top-right",
+                    "showMethod": 'slideDown',
+                    "hideMethod": 'slideUp',
+                    "closeMethod": 'slideUp',
+                };
+                toastr.error(`<p  style="font-family: 'Patrick Hand', cursive;">Something went wrong</p>`);
             }
+            document.getElementById('generateButton').classList.add('disabled')
+            document.getElementById('downloadButton').classList.remove('disabled')
+            drawbbox.classList.add('disabled')
+            document.getElementById("upload_polygon_button").classList.add('disabled')
+
+            document.getElementById('remove_polygon_button').classList.add('disabled')
+            // }
         })
     };
 
@@ -310,20 +321,25 @@ function displayPolygonData(content) {
 }
 // upload polygon on click 
 uploadInput.addEventListener('change', function () {
-    if(document.getElementById("uploadSpan").innerHTML === 'Upload Polygon'){
-        uploadPolygon()
-        drawbbox.classList.add('disabled')
-        document.getElementById("generateButton").classList.remove('disabled')
-        document.getElementById("uploadSpan").innerHTML = 'Remove Polyon'
-    }else{
-        map.removeLayer('Polygon Layer')
-        map.removeSource('Polygon Layer')
-        drawbbox.classList.remove('disabled')
-        document.getElementById("generateButton").classList.add('disabled')
-        document.getElementById("uploadSpan").innerHTML = 'Upload Polyon'
-    }
-    
+    uploadPolygon()
+    drawbbox.classList.add('disabled')
+    document.getElementById("generateButton").classList.remove('disabled')
+    document.getElementById("remove_polygon_button").style.visibility = 'visible'
 }, false)
+
+// when user removes polygon file
+document.getElementById("remove_polygon_button").addEventListener('click', function () {
+    map.removeLayer('Polygon Layer')
+    map.removeSource('Polygon Layer')
+    drawbbox.classList.remove('disabled')
+    document.getElementById("generateButton").classList.add('disabled')
+    document.getElementById("uploadSpan").innerHTML = `Upload File<i class="material-icons right">attach_file</i>`
+    // fit map to global bounds 
+    map.fitBounds([0, 90, 0, -90], {
+        padding: { top: 0, bottom: 100 },
+        linear: false
+    });
+})
 
 // select geojson properties 
 var variableArray = ['bool', 'floating', 'integer', 'age', 'first', 'last', 'gender', 'animal', 'color', 'company', 'profession', 'address', 'altitude', 'phone', 'zip', 'date']
