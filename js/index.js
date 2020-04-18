@@ -223,13 +223,13 @@ var reader = new FileReader();
 function uploadPolygon() {
     // upload datasets
     reader.onload = function () {
-        var dataURL = this.result;
+        var dataURL = reader.result;
         var polygon = JSON.parse(dataURL);
         displayPolygonData(polygon)
-        console.log(uploadInput.files[uploadInput.files.length - 1])
+        console.log(uploadInput.files[0])
     };
 
-    reader.readAsText(uploadInput.files[uploadInput.files.length - 1]);
+    reader.readAsText(uploadInput.files[0]);
 
 }
 var featureCollects = []
@@ -275,9 +275,9 @@ function displayPolygonData(feature) {
     }
     draw.delete(featureIds)
     // prevent page reload on submit 
-    document.getElementById("generateForm").addEventListener('submit', handleForm)
+    document.getElementById("generateButton").addEventListener('click', handleForm)
     // generate random data on form submit 
-    document.getElementById("generateForm").addEventListener('submit', function () {
+    document.getElementById("generateButton").addEventListener('click', function (e) {
         // is state in cancel mode 
         // if (document.getElementById('generateInput').value === 'CANCEL') {
         //     document.getElementById('generateInput').value = 'GENERATE'
@@ -297,62 +297,86 @@ function displayPolygonData(feature) {
         //     }
         // } else {
         // is state in generate mode 
-        document.getElementById('generateInput').value = 'CANCEL'
-        // retrieve form data 
-        var userInput = $("#generateForm").serializeArray();
-        featureCollects.push(featureCollect)
-        // get the latest polygon added 
-        var latestFeatureCollect = featureCollects[featureCollects.length - 1]
-        // if user changed file input then pick the latest file 
-        if (featureCollects.length > 1) {
-            console.log(JSON.stringify(latestFeatureCollect))
-            // generate random data based on selected geometry 
-            if (userInput[0].value === 'Point') {
-                new randomData.randomPointInPoly(latestFeatureCollect, map, userInput[1].value, userInput)
-            } else if (userInput[0].value === 'Line') {
-                new randomData.randomLineInPoly(latestFeatureCollect, map, userInput[1].value, userInput)
-            } else if (userInput[0].value === 'Polygon') {
-                new randomData.randomPolyinPoly(latestFeatureCollect, map, userInput[1].value, userInput)
-            } else {
-                toastr.options = {
-                    "closeButton": false,
-                    "timeOut": 7000,
-                    "positionClass": "toast-top-right",
-                    "showMethod": 'slideDown',
-                    "hideMethod": 'slideUp',
-                    "closeMethod": 'slideUp',
-                };
-                toastr.error(`<p  style="font-family: 'Patrick Hand', cursive;">Something went wrong</p>`);
+        if (document.getElementById("generateSpan").innerHTML === 'GENERATE') {
+            document.getElementById('generateSpan').innerHTML = 'CANCEL'
+            // document.getElementById('generateButton').style.color = 'red'
+            // retrieve form data 
+            var userInput = $("#generateForm").serializeArray();
+            featureCollects.push(featureCollect)
+            // get the latest polygon added 
+            var latestFeatureCollect = featureCollects[featureCollects.length - 1]
+            console.log(featureCollects)
+            // while (featureCollects.length == 1) {
+            //     // generate random data based on selected geometry 
+            //     if (userInput[0].value === 'Point') {
+            //         new randomData.randomPointInPoly(latestFeatureCollect, map, userInput[1].value, userInput)
+            //     } else if (userInput[0].value === 'Line') {
+            //         new randomData.randomLineInPoly(latestFeatureCollect, map, userInput[1].value, userInput)
+            //     } else if (userInput[0].value === 'Polygon') {
+            //         new randomData.randomPolyinPoly(latestFeatureCollect, map, userInput[1].value, userInput)
+            //     } else {
+            //         toastr.options = {
+            //             "closeButton": false,
+            //             "timeOut": 7000,
+            //             "positionClass": "toast-top-right",
+            //             "showMethod": 'slideDown',
+            //             "hideMethod": 'slideUp',
+            //             "closeMethod": 'slideUp',
+            //         };
+            //         toastr.error(`<p  style="font-family: 'Patrick Hand', cursive;">Something went wrong</p>`);
+            //     }
+            // }
+            // if user changed file input then pick the latest file 
+
+            if (featureCollects.length < 2) {
+                // generate random data based on selected geometry 
+                if (userInput[0].value === 'Point') {
+                    new randomData.randomPointInPoly(latestFeatureCollect, map, userInput[1].value, userInput)
+                } else if (userInput[0].value === 'Line') {
+                    new randomData.randomLineInPoly(latestFeatureCollect, map, userInput[1].value, userInput)
+                } else if (userInput[0].value === 'Polygon') {
+                    new randomData.randomPolyinPoly(latestFeatureCollect, map, userInput[1].value, userInput)
+                } else {
+                    toastr.options = {
+                        "closeButton": false,
+                        "timeOut": 7000,
+                        "positionClass": "toast-top-right",
+                        "showMethod": 'slideDown',
+                        "hideMethod": 'slideUp',
+                        "closeMethod": 'slideUp',
+                    };
+                    toastr.error(`<p  style="font-family: 'Patrick Hand', cursive;">Something went wrong</p>`);
+                }
             }
-        } else if(featureCollects.length < 1){
-            // generate random data based on selected geometry 
-            if (userInput[0].value === 'Point') {
-                new randomData.randomPointInPoly(featureCollect, map, userInput[1].value, userInput)
-            } else if (userInput[0].value === 'Line') {
-                new randomData.randomLineInPoly(featureCollect, map, userInput[1].value, userInput)
-            } else if (userInput[0].value === 'Polygon') {
-                new randomData.randomPolyinPoly(featureCollect, map, userInput[1].value, userInput)
-            } else {
-                toastr.options = {
-                    "closeButton": false,
-                    "timeOut": 7000,
-                    "positionClass": "toast-top-right",
-                    "showMethod": 'slideDown',
-                    "hideMethod": 'slideUp',
-                    "closeMethod": 'slideUp',
-                };
-                toastr.error(`<p  style="font-family: 'Patrick Hand', cursive;">Something went wrong</p>`);
+            if (featureCollects.length > 1) {
+                console.log(JSON.stringify(latestFeatureCollect))
+                // generate random data based on selected geometry 
+                if (userInput[0].value === 'Point') {
+                    new randomData.randomPointInPoly(latestFeatureCollect, map, userInput[1].value, userInput)
+                } else if (userInput[0].value === 'Line') {
+                    new randomData.randomLineInPoly(latestFeatureCollect, map, userInput[1].value, userInput)
+                } else if (userInput[0].value === 'Polygon') {
+                    new randomData.randomPolyinPoly(latestFeatureCollect, map, userInput[1].value, userInput)
+                } else {
+                    toastr.options = {
+                        "closeButton": false,
+                        "timeOut": 7000,
+                        "positionClass": "toast-top-right",
+                        "showMethod": 'slideDown',
+                        "hideMethod": 'slideUp',
+                        "closeMethod": 'slideUp',
+                    };
+                    toastr.error(`<p  style="font-family: 'Patrick Hand', cursive;">Something went wrong</p>`);
+                }
             }
+
+            // document.getElementById('generateButton').classList.add('disabled')
+            document.getElementById('downloadButton').classList.remove('disabled')
+            // drawbbox.classList.add('disabled')
+            // document.getElementById("upload_polygon_button").classList.add('disabled')
+            // document.getElementById('remove_polygon_button').classList.add('disabled')
         }
 
-
-
-
-        document.getElementById('generateButton').classList.add('disabled')
-        document.getElementById('downloadButton').classList.remove('disabled')
-        drawbbox.classList.add('disabled')
-        document.getElementById("upload_polygon_button").classList.add('disabled')
-        document.getElementById('remove_polygon_button').classList.add('disabled')
         // }
     })
 }
@@ -361,8 +385,6 @@ function displayPolygonData(feature) {
 // upload polygon on click 
 uploadInput.addEventListener('change', function () {
     uploadPolygon()
-    uploadInput.value = null;
-    uploadForm.reset();
     draw.deleteAll()
     drawbbox.classList.add('disabled')
     document.getElementById("generateButton").classList.remove('disabled')
@@ -372,7 +394,6 @@ uploadInput.addEventListener('change', function () {
 
 // when user removes polygon file
 document.getElementById("remove_polygon_button").addEventListener('click', function () {
-    reader.abort()
     uploadInput.value = null;
     uploadForm.reset();
     draw.deleteAll()

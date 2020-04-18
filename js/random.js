@@ -18,7 +18,7 @@ function downloadPredictions(content, filename) {
         saveAs(new File([JSON.stringify(latestContent)], file, {
             type: "text/plain;charset=utf-8"
         }), file);
-    } else if (contentArray < 2) {
+    } else if (contentArray.length < 2) {
         saveAs(new File([JSON.stringify(content)], file, {
             type: "text/plain;charset=utf-8"
         }), file);
