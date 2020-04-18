@@ -9,11 +9,20 @@ var downloadButton = document.getElementById('downloadButton')
 // Instantiate Chance so it can be used
 var chance = new Chance();
 // download predicted data 
+var contentArray = []
 function downloadPredictions(content, filename) {
     var file = filename + '.geojson';
-    saveAs(new File([JSON.stringify(content)], file, {
-        type: "text/plain;charset=utf-8"
-    }), file);
+    contentArray.push(content)
+    let latestContent = contentArray[contentArray.length - 1]
+    if (contentArray.length > 1) {
+        saveAs(new File([JSON.stringify(latestContent)], file, {
+            type: "text/plain;charset=utf-8"
+        }), file);
+    } else if (contentArray < 2) {
+        saveAs(new File([JSON.stringify(content)], file, {
+            type: "text/plain;charset=utf-8"
+        }), file);
+    }
 }
 var randomData = function () {
     var randomData = {};
@@ -67,6 +76,7 @@ var randomData = function () {
         };
         toastr.success(`<p  style="font-family: 'Patrick Hand', cursive;">Successfully made ${collection.features.length} out of 100 features </p>`);
         console.log("number of final features");
+
         map.addSource('Random Point', {
             type: 'geojson',
             data: collection
@@ -123,6 +133,7 @@ var randomData = function () {
         downloadButton.addEventListener('click', function () {
             downloadPredictions(collection, 'points')
         })
+
     };
 
     // find random polygons within user defined boundary 
@@ -182,7 +193,7 @@ var randomData = function () {
             "closeMethod": 'slideUp',
         };
 
-        toastr.success(`<p  style="font-family: 'Patrick Hand', cursive;">Successfully made ${collection.features.length+1} out of ${featureCount} features </p>`);
+        toastr.success(`<p  style="font-family: 'Patrick Hand', cursive;">Successfully made ${collection.features.length + 1} out of ${featureCount} features </p>`);
 
         map.addSource('Random Polygon', {
             type: 'geojson',
