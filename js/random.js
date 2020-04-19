@@ -13,15 +13,14 @@ var contentArray = []
 function downloadPredictions(content, filename) {
     var file = filename + '.geojson';
     contentArray.push(content)
-    let latestContent = contentArray[contentArray.length - 1]
     if (contentArray.length > 1) {
-        saveAs(new File([JSON.stringify(latestContent)], file, {
+        saveAs(new File([JSON.stringify(contentArray[contentArray.length - 1])], file, {
             type: "text/plain;charset=utf-8"
         }), file);
-    } else if (contentArray.length < 2) {
+    } else{
         saveAs(new File([JSON.stringify(content)], file, {
             type: "text/plain;charset=utf-8"
-        }), file);
+        }), file)
     }
 }
 var randomData = function () {
@@ -66,15 +65,6 @@ var randomData = function () {
             randomFinal
         );
 
-        toastr.options = {
-            "closeButton": false,
-            "timeOut": 7000,
-            "positionClass": "toast-top-right",
-            "showMethod": 'slideDown',
-            "hideMethod": 'slideUp',
-            "closeMethod": 'slideUp',
-        };
-        toastr.success(`<p  style="font-family: 'Patrick Hand', cursive;">Successfully made ${collection.features.length} out of 100 features </p>`);
         console.log("number of final features");
 
         map.addSource('Random Point', {
@@ -184,17 +174,7 @@ var randomData = function () {
         var collection = featureCollection(
             randomFinal
         );
-        toastr.options = {
-            "closeButton": false,
-            "timeOut": 7000,
-            "positionClass": "toast-top-right",
-            "showMethod": 'slideDown',
-            "hideMethod": 'slideUp',
-            "closeMethod": 'slideUp',
-        };
-
-        toastr.success(`<p  style="font-family: 'Patrick Hand', cursive;">Successfully made ${collection.features.length + 1} out of ${featureCount} features </p>`);
-
+        
         map.addSource('Random Polygon', {
             type: 'geojson',
             data: collection
@@ -287,16 +267,6 @@ var randomData = function () {
         var collection = featureCollection(
             randomFinal
         );
-
-        toastr.options = {
-            "closeButton": false,
-            "timeOut": 7000,
-            "positionClass": "toast-top-right",
-            "showMethod": 'slideDown',
-            "hideMethod": 'slideUp',
-            "closeMethod": 'slideUp',
-        };
-        toastr.success(`<p  style="font-family: 'Patrick Hand', cursive;">Successfully made ${collection.features.length} out of ${featureCount} features </p>`);
 
         map.addSource('Random Line', {
             type: 'geojson',
