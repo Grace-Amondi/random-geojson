@@ -274,10 +274,14 @@ function displayPolygonData(feature) {
         console.log("not polygon feature");
     }
     draw.delete(featureIds)
+    featureCollects.push(featureCollect)
+    var latestFeatureCollect = featureCollects[featureCollects.length - 1]
+
+    console.log(featureCollects)
     // prevent page reload on submit 
     document.getElementById("generateButton").addEventListener('click', handleForm)
     // generate random data on form submit 
-    document.getElementById("generateButton").addEventListener('click', function (e) {
+    document.getElementById("generateButton").addEventListener('click', function () {
         // is state in cancel mode 
         // if (document.getElementById('generateInput').value === 'CANCEL') {
         //     document.getElementById('generateInput').value = 'GENERATE'
@@ -302,10 +306,8 @@ function displayPolygonData(feature) {
             // document.getElementById('generateButton').style.color = 'red'
             // retrieve form data 
             var userInput = $("#generateForm").serializeArray();
-            featureCollects.push(featureCollect)
             // get the latest polygon added 
-            var latestFeatureCollect = featureCollects[featureCollects.length - 1]
-            console.log(featureCollects)
+            // console.log(featureCollects)
             // while (featureCollects.length == 1) {
             //     // generate random data based on selected geometry 
             //     if (userInput[0].value === 'Point') {
@@ -329,6 +331,7 @@ function displayPolygonData(feature) {
             // if user changed file input then pick the latest file 
 
             if (featureCollects.length < 2) {
+                console.log("less than 2",latestFeatureCollect)
                 // generate random data based on selected geometry 
                 if (userInput[0].value === 'Point') {
                     new randomData.randomPointInPoly(latestFeatureCollect, map, userInput[1].value, userInput)
@@ -349,14 +352,14 @@ function displayPolygonData(feature) {
                 }
             }
             if (featureCollects.length > 1) {
-                console.log(JSON.stringify(latestFeatureCollect))
+                console.log("greater than 1",JSON.stringify(featureCollects[1]))
                 // generate random data based on selected geometry 
                 if (userInput[0].value === 'Point') {
-                    new randomData.randomPointInPoly(latestFeatureCollect, map, userInput[1].value, userInput)
+                    new randomData.randomPointInPoly(featureCollects[1], map, userInput[1].value, userInput)
                 } else if (userInput[0].value === 'Line') {
-                    new randomData.randomLineInPoly(latestFeatureCollect, map, userInput[1].value, userInput)
+                    new randomData.randomLineInPoly(featureCollects[1], map, userInput[1].value, userInput)
                 } else if (userInput[0].value === 'Polygon') {
-                    new randomData.randomPolyinPoly(latestFeatureCollect, map, userInput[1].value, userInput)
+                    new randomData.randomPolyinPoly(featureCollects[1], map, userInput[1].value, userInput)
                 } else {
                     toastr.options = {
                         "closeButton": false,
