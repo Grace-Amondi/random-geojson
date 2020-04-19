@@ -1,10 +1,12 @@
 # Random Geojson
 
 ## Introduction
-![demo](./images/demo.png)
+![demo](./images/demo1.png)
+
 Random Geojson is an open source tool for generating random point, line and polygon data within a user-defined boundary. It was created using of [Materialize](https://materializecss.com/ "Materialize"), [Turf JS](https://turfjs.org "turf js") and [Mapbox GL JS](https://docs.mapbox.com/mapbox-gl-js/api/ "Mapbox GL JS"). View [demo](https://random-geojson.surge.sh/)
 
 ## Run Locally
+![demo](./images/demo3.png)
 
 Clone application
 

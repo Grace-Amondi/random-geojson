@@ -12,6 +12,7 @@
   "license": "ISC",
   "dependencies": {
     "@mapbox/mapbox-gl-draw": "^1.1.2",
+    "@turf/area": "^6.0.1",
     "@turf/boolean-contains": "^6.0.1",
     "@turf/boolean-point-in-polygon": "^6.0.1",
     "@turf/boolean-within": "^6.0.1",

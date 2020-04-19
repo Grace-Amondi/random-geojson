@@ -3,6 +3,7 @@ import { point, featureCollection, polygon as turfpoly, lineString } from '@turf
 import { randomPoint, randomPolygon, randomLineString } from "@turf/random"
 import booleanWithin from '@turf/boolean-within'
 import booleanPointInPolygon from '@turf/boolean-point-in-polygon'
+import area from '@turf/area'
 // Load Chance
 var Chance = require('chance');
 var downloadButton = document.getElementById('downloadButton')
@@ -140,7 +141,7 @@ var randomData = function () {
             let inside5 = false
             let mypolygon
             do {
-                mypolygon = randomPolygon(1, { bbox: bounds, num_vertices: 4, max_radial_length: 0.06 })
+                mypolygon = randomPolygon(1, { bbox: bounds, num_vertices: 4, max_radial_length: 0.06})
 
                 // i know this is hardcoding but relax...
                 inside1 = booleanPointInPolygon(mypolygon.features[0].geometry.coordinates[0][0], polygon.features[0]);
@@ -185,7 +186,8 @@ var randomData = function () {
             'source': 'Random Polygon',
             'paint': {
                 'fill-color': '#01579b',
-                'fill-opacity': 1
+                'fill-opacity': 0.6,
+                'fill-outline-color':'black'
             }
         });
         var bbox = turf.extent(collection);

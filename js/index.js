@@ -7,8 +7,7 @@ import DrawRectangle from 'mapbox-gl-draw-rectangle-mode';
 import '@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css'
 import { randomData } from './random';
 import { featureCollection } from '@turf/helpers'
-import { formSubscriptionItems } from 'final-form';
-
+import area from '@turf/area'
 // import config variables
 require('dotenv').config()
 
@@ -216,7 +215,7 @@ function displayPolygonData(feature) {
     var featureIds = draw.add(feature);
     var pointId = featureIds[0];
     var featureCollect = featureCollection([draw.get(pointId)])
-    console.log(featureCollect);
+    
     // only upload polygon files
     if (featureCollect.features[0].geometry.type == 'Polygon') {
         map.addSource('Polygon Layer', {
@@ -253,8 +252,9 @@ function displayPolygonData(feature) {
     }
     draw.delete(featureIds)
     featureCollects.push(featureCollect)
+    console.log(featureCollect);
 
-    console.log(featureCollects)
+    console.log(area(featureCollects[featureCollects.length-1]))
     // prevent page reload on submit 
     document.getElementById("generateButton").addEventListener('click', handleForm)
     // generate random data on form submit 
@@ -292,7 +292,6 @@ function displayPolygonData(feature) {
 document.getElementById("clearButton").addEventListener('click', function () {
     document.getElementById('downloadButton').classList.add('disabled')
     document.getElementById("generateButton").classList.remove('disabled')
-
     // remove added layer 
     if (map.getStyle().layers.slice(-1)[0].id === 'Random Point') {
         map.removeLayer('Random Point');
@@ -306,6 +305,8 @@ document.getElementById("clearButton").addEventListener('click', function () {
     } else {
         console.log("nothing added")
     }
+    document.getElementById("clearButton").style.visibility = 'hidden'
+
 })
 
 // upload polygon on click 
