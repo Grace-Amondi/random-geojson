@@ -279,8 +279,12 @@ var randomData = function () {
             'type': 'line',
             'source': 'Random Line',
             'paint': {
-                'line-width': 3,
-                'line-color': 'black'
+                'line-width': 2,
+                'line-color': 'black',
+                'line-gap-width':2
+            },
+            'layout':{
+                'line-cap':'round',
             }
         });
         var bbox = turf.extent(collection);
