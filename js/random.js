@@ -6,24 +6,9 @@ import booleanPointInPolygon from '@turf/boolean-point-in-polygon'
 import area from '@turf/area'
 // Load Chance
 var Chance = require('chance');
-var downloadButton = document.getElementById('downloadButton')
 // Instantiate Chance so it can be used
 var chance = new Chance();
-// download predicted data 
-var contentArray = []
-function downloadPredictions(content, filename) {
-    var file = filename + '.geojson';
-    contentArray.push(content)
-    if (contentArray.length > 1) {
-        saveAs(new File([JSON.stringify(contentArray[contentArray.length - 1])], file, {
-            type: "text/plain;charset=utf-8"
-        }), file);
-    } else{
-        saveAs(new File([JSON.stringify(content)], file, {
-            type: "text/plain;charset=utf-8"
-        }), file)
-    }
-}
+
 var randomData = function () {
     var randomData = {};
     // find random points within user defined boundary 
@@ -121,10 +106,6 @@ var randomData = function () {
             map.getCanvas().style.cursor = 'default';
         });
 
-        downloadButton.addEventListener('click', function () {
-            downloadPredictions(collection, 'points')
-        })
-
     };
 
     // find random polygons within user defined boundary 
@@ -141,7 +122,7 @@ var randomData = function () {
             let inside5 = false
             let mypolygon
             do {
-                mypolygon = randomPolygon(1, { bbox: bounds, num_vertices: 4, max_radial_length: 0.06})
+                mypolygon = randomPolygon(1, { bbox: bounds, num_vertices: 4, max_radial_length: 0.06 })
 
                 // i know this is hardcoding but relax...
                 inside1 = booleanPointInPolygon(mypolygon.features[0].geometry.coordinates[0][0], polygon.features[0]);
@@ -175,7 +156,7 @@ var randomData = function () {
         var collection = featureCollection(
             randomFinal
         );
-        
+
         map.addSource('Random Polygon', {
             type: 'geojson',
             data: collection
@@ -187,7 +168,7 @@ var randomData = function () {
             'paint': {
                 'fill-color': '#01579b',
                 'fill-opacity': 0.6,
-                'fill-outline-color':'black'
+                'fill-outline-color': 'black'
             }
         });
         var bbox = turf.extent(collection);
@@ -218,10 +199,7 @@ var randomData = function () {
         map.on('mouseleave', 'Random Polygon', function () {
             map.getCanvas().style.cursor = 'default';
         });
-        downloadButton.addEventListener('click', function () {
-            downloadPredictions(collection, 'polygons')
-        })
-
+      
     };
 
     // find random line within user defined boundary 
@@ -281,10 +259,10 @@ var randomData = function () {
             'paint': {
                 'line-width': 2,
                 'line-color': 'black',
-                'line-gap-width':2
+                'line-gap-width': 2
             },
-            'layout':{
-                'line-cap':'round',
+            'layout': {
+                'line-cap': 'round',
             }
         });
         var bbox = turf.extent(collection);
@@ -314,9 +292,7 @@ var randomData = function () {
         map.on('mouseleave', 'Random Line', function () {
             map.getCanvas().style.cursor = 'default';
         });
-        downloadButton.addEventListener('click', function () {
-            downloadPredictions(collection, 'lines')
-        })
+        
 
     };
 

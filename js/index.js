@@ -14,6 +14,8 @@ require('dotenv').config()
 var uploadInput = document.getElementById("upload_polygon");
 var drawbbox = document.getElementById('drawbbox')
 var uploadForm = document.getElementById("uploadtrainForm")
+var downloadButton = document.getElementById('downloadButton')
+
 // mobile nav bar 
 $(".button-collapse").sideNav();
 
@@ -150,11 +152,12 @@ function retrieveBbox(data) {
         var userInput = $("#generateForm").serializeArray();
         // generate random data based on selected geometry 
         if (userInput[0].value === 'Point') {
-            randomData.randomPointInPoly(dataArray[dataArray.length-1], map, userInput[1].value, userInput)
+            randomData.randomPointInPoly(dataArray[dataArray.length - 1], map, userInput[1].value, userInput)
+
         } else if (userInput[0].value === 'Line') {
-            randomData.randomLineInPoly(dataArray[dataArray.length-1], map, userInput[1].value, userInput)
+            randomData.randomLineInPoly(dataArray[dataArray.length - 1], map, userInput[1].value, userInput)
         } else if (userInput[0].value === 'Polygon') {
-            randomData.randomPolyinPoly(dataArray[dataArray.length-1], map, userInput[1].value, userInput)
+            randomData.randomPolyinPoly(dataArray[dataArray.length - 1], map, userInput[1].value, userInput)
         } else {
             toastr.options = {
                 "closeButton": false,
@@ -215,7 +218,7 @@ function displayPolygonData(feature) {
     var featureIds = draw.add(feature);
     var pointId = featureIds[0];
     var featureCollect = featureCollection([draw.get(pointId)])
-    
+
     // only upload polygon files
     if (featureCollect.features[0].geometry.type == 'Polygon') {
         map.addSource('Polygon Layer', {
@@ -237,6 +240,9 @@ function displayPolygonData(feature) {
             padding: 20,
             linear: false
         });
+        document.getElementById("upload_polygon_button").classList.add('disabled')
+        document.getElementById("remove_polygon_button").style.visibility = 'visible'
+        drawbbox.classList.add('disabled')
 
     } else {
         toastr.options = {
@@ -254,7 +260,7 @@ function displayPolygonData(feature) {
     featureCollects.push(featureCollect)
     console.log(featureCollect);
 
-    console.log(area(featureCollects[featureCollects.length-1]))
+    console.log(area(featureCollects[featureCollects.length - 1]))
     // prevent page reload on submit 
     document.getElementById("generateButton").addEventListener('click', handleForm)
     // generate random data on form submit 
@@ -266,6 +272,7 @@ function displayPolygonData(feature) {
         // generate random data based on selected geometry 
         if (userInput[0].value === 'Point') {
             new randomData.randomPointInPoly(featureCollects[featureCollects.length - 1], map, userInput[1].value, userInput)
+
         } else if (userInput[0].value === 'Line') {
             new randomData.randomLineInPoly(featureCollects[featureCollects.length - 1], map, userInput[1].value, userInput)
         } else if (userInput[0].value === 'Polygon') {
@@ -281,7 +288,6 @@ function displayPolygonData(feature) {
             };
             toastr.error(`<p  style="font-family: 'Patrick Hand', cursive;">Something went wrong</p>`);
         }
-
         document.getElementById("generateButton").classList.add('disabled')
         document.getElementById("clearButton").style.visibility = 'visible'
         document.getElementById('downloadButton').classList.remove('disabled')
@@ -313,9 +319,7 @@ document.getElementById("clearButton").addEventListener('click', function () {
 uploadInput.addEventListener('change', function () {
     uploadPolygon()
     draw.deleteAll()
-    drawbbox.classList.add('disabled')
-    document.getElementById("upload_polygon_button").classList.add('disabled')
-    document.getElementById("remove_polygon_button").style.visibility = 'visible'
+
 })
 
 // when user removes polygon file
@@ -359,3 +363,14 @@ variableArray.forEach(opt => {
     $('#variables').append("<option value='" + opt + "'>" + innerValue + "</option>")
     $('select').material_select()
 });
+
+// download predicted data 
+downloadButton.addEventListener('click', function () {
+    let layerObj = map.getStyle().sources
+    let lastObj = layerObj[Object.keys(layerObj)[Object.keys(layerObj).length - 1]]
+    console.log(lastObj.data)
+    var file = lastObj.data.features[0].geometry.type + '.geojson'
+    saveAs(new File([JSON.stringify(lastObj.data)], file, {
+        type: "text/plain;charset=utf-8"
+    }), file);
+})
