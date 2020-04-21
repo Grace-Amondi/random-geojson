@@ -103,14 +103,14 @@
 
                         <div id="generate">
                             <form id="generateForm">
+                                <!-- <label for="geometry">Select Geometry</label> -->
+
                                 <select id="geometry" name="geometry" required>
-                                    <option disabled selected>Geometry Type</option>
+                                    <option value="" disabled selected >Geometry Type</option>
                                     <option value="Point">Point</option>
                                     <option value="Line">Line</option>
                                     <option value="Polygon">Polygon</option>
-
                                 </select>
-
                                 <div>
                                     <p>
                                         <input class="with-gap  black-text" type="number" name="pointCount"
@@ -131,13 +131,13 @@
                                     <div class="col s12 m6 l6">
                                         <div class="btn waves-effect waves-light #0277bd light-blue darken-3"
                                             id="generateButton">
-                                            <span class="white-text" id="generateSpan">GENERATE</span>
-                                            <input id="generateInput" type="button">
+                                            <!-- <span class="white-text" id="generateSpan">GENERATE</span> -->
+                                            <input id="generateInput" type="submit" value="GENERATE">
                                         </div>
                                     </div>
                                     <div class="col s12 m6 l6">
                                         <div class="btn waves-effect waves-light red" id="clearButton" style="visibility: hidden;">
-                                            <span class="white-text" id="generateSpan">CLEAR</span>
+                                            <span class="white-text" id="clearSpan">CLEAR</span>
                                             <input id="clearInput" type="button">
                                         </div>
                                     </div>

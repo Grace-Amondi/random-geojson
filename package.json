@@ -6,7 +6,7 @@
   "scripts": {
     "start": "parcel index.html",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "rm -rf dist && parcel build --public-url . index.html && cp CNAME dist && cd dist/ && rm *.map && surge /dist"
+    "build": "rm -rf dist && parcel build --public-url . index.html && cp CNAME dist && cd dist/ && rm *.map && surge dist"
   },
   "author": "Grace-Amondi",
   "license": "ISC",

@@ -70,24 +70,24 @@ drawbbox.addEventListener('click', function () {
         document.getElementById("upload_polygon_button").classList.remove('disabled')
         // disable draw extent button interactivity 
         document.getElementById('drawSpan').innerHTML = "DRAW EXTENT"
-
+        // delete bounding box 
+        draw.deleteAll()
         //    delete bounding box if user clicks cancel 
-        if (map.getStyle().layers.slice(-1)[0].id === 'BBOX Layer') {
-            // delete bounding box 
-            draw.deleteAll()
-            // remove bbox layer and source 
-            map.removeLayer('BBOX Layer')
-            map.removeSource('BBOX Layer')
-            toastr.options = {
-                "closeButton": false,
-                "timeOut": 7000,
-                "positionClass": "toast-top-right",
-                "showMethod": 'slideDown',
-                "hideMethod": 'slideUp',
-                "closeMethod": 'slideUp',
-            };
-            toastr.warning(`<p  style="font-family: 'Patrick Hand', cursive;">Extent deleted successfully</p>`);
-        }
+        // if (map.getStyle().layers.slice(-1)[0].id === 'BBOX Layer') {
+
+        // remove bbox layer and source 
+        map.removeLayer('BBOX Layer')
+        map.removeSource('BBOX Layer')
+        toastr.options = {
+            "closeButton": false,
+            "timeOut": 7000,
+            "positionClass": "toast-top-right",
+            "showMethod": 'slideDown',
+            "hideMethod": 'slideUp',
+            "closeMethod": 'slideUp',
+        };
+        toastr.warning(`<p  style="font-family: 'Patrick Hand', cursive;">Extent deleted successfully</p>`);
+        // }
         // remove any layer added 
         if (map.getStyle().layers.slice(-1)[0].id === 'Random Point') {
             map.removeLayer('Random Point');
@@ -215,7 +215,15 @@ function displayPolygonData(feature) {
         document.getElementById("upload_polygon_button").classList.add('disabled')
         document.getElementById("remove_polygon_button").style.visibility = 'visible'
         drawbbox.classList.add('disabled')
-
+        toastr.options = {
+            "closeButton": false,
+            "timeOut": 7000,
+            "positionClass": "toast-top-right",
+            "showMethod": 'slideDown',
+            "hideMethod": 'slideUp',
+            "closeMethod": 'slideUp',
+        };
+        toastr.success(`<p  style="font-family: 'Patrick Hand', cursive;">Polygon added successfully</p>`);
     } else {
         toastr.options = {
             "closeButton": false,
@@ -249,18 +257,27 @@ document.getElementById("clearButton").addEventListener('click', function () {
         console.log("nothing added")
     }
     document.getElementById("clearButton").style.visibility = 'hidden'
-
+    toastr.options = {
+        "closeButton": false,
+        "timeOut": 7000,
+        "positionClass": "toast-top-right",
+        "showMethod": 'slideDown',
+        "hideMethod": 'slideUp',
+        "closeMethod": 'slideUp',
+    };
+    toastr.warning(`<p  style="font-family: 'Patrick Hand', cursive;">Random Data cleared</p>`);
 })
 
 // upload polygon on click 
 uploadInput.addEventListener('change', function () {
     uploadPolygon()
     draw.deleteAll()
-
+  
 })
 
 // when user removes polygon file
-document.getElementById("remove_polygon_button").addEventListener('click', function () {;
+document.getElementById("remove_polygon_button").addEventListener('click', function () {
+    ;
     draw.deleteAll()
     map.removeLayer('Polygon Layer')
     map.removeSource('Polygon Layer')
@@ -268,6 +285,23 @@ document.getElementById("remove_polygon_button").addEventListener('click', funct
     document.getElementById("upload_polygon_button").classList.remove('disabled')
     document.getElementById("uploadSpan").innerHTML = `Upload File<i class="material-icons right">attach_file</i>`
 
+    //    delete bounding box if user clicks cancel 
+    if (map.getStyle().layers.slice(-1)[0].id === 'BBOX Layer') {
+        // delete bounding box 
+        draw.deleteAll()
+        // remove bbox layer and source 
+        map.removeLayer('BBOX Layer')
+        map.removeSource('BBOX Layer')
+        toastr.options = {
+            "closeButton": false,
+            "timeOut": 7000,
+            "positionClass": "toast-top-right",
+            "showMethod": 'slideDown',
+            "hideMethod": 'slideUp',
+            "closeMethod": 'slideUp',
+        };
+        toastr.warning(`<p  style="font-family: 'Patrick Hand', cursive;">Extent deleted successfully</p>`);
+    }
     // remove any layer added 
     if (map.getStyle().layers.slice(-1)[0].id === 'Random Point') {
         map.removeLayer('Random Point');
@@ -287,25 +321,71 @@ document.getElementById("remove_polygon_button").addEventListener('click', funct
         linear: false
     });
     document.getElementById("remove_polygon_button").style.visibility = 'hidden'
-
+    toastr.options = {
+        "closeButton": false,
+        "timeOut": 7000,
+        "positionClass": "toast-top-right",
+        "showMethod": 'slideDown',
+        "hideMethod": 'slideUp',
+        "closeMethod": 'slideUp',
+    };
+    toastr.warning(`<p  style="font-family: 'Patrick Hand', cursive;">Polygon removed</p>`);
 })
 
 // prevent page reload on submit 
-document.getElementById("generateButton").addEventListener('click', handleForm)
+document.getElementById("generateForm").addEventListener('submit', handleForm)
 // generate random data on form submit 
-document.getElementById("generateButton").addEventListener('click', function () {
+document.getElementById("generateForm").addEventListener('submit', function () {
     var layerObj = map.getStyle().sources
     var lastObj = layerObj[Object.keys(layerObj)[Object.keys(layerObj).length - 1]]
     var userDef = featureCollection([lastObj.data.features[0]])
+    if(userDef.features[0] == undefined){
+        toastr.options = {
+            "closeButton": false,
+            "timeOut": 7000,
+            "positionClass": "toast-top-right",
+            "showMethod": 'slideDown',
+            "hideMethod": 'slideUp',
+            "closeMethod": 'slideUp',
+        };
+        toastr.error(`<p  style="font-family: 'Patrick Hand', cursive;">Please add an extent first.</p>`);
+    }
     // retrieve form data 
     var userInput = $("#generateForm").serializeArray();
     // generate random data based on selected geometry 
     if (userInput[0].value === 'Point') {
         randomData.randomPointInPoly(userDef, map, userInput[1].value, userInput)
+        toastr.options = {
+            "closeButton": false,
+            "timeOut": 7000,
+            "positionClass": "toast-top-right",
+            "showMethod": 'slideDown',
+            "hideMethod": 'slideUp',
+            "closeMethod": 'slideUp',
+        };
+        toastr.success(`<p  style="font-family: 'Patrick Hand', cursive;">Random Point Data successfull</p>`);
     } else if (userInput[0].value === 'Line') {
         randomData.randomLineInPoly(userDef, map, userInput[1].value, userInput)
+        toastr.options = {
+            "closeButton": false,
+            "timeOut": 7000,
+            "positionClass": "toast-top-right",
+            "showMethod": 'slideDown',
+            "hideMethod": 'slideUp',
+            "closeMethod": 'slideUp',
+        };
+        toastr.success(`<p  style="font-family: 'Patrick Hand', cursive;">Random Line Data successfull</p>`);
     } else if (userInput[0].value === 'Polygon') {
         randomData.randomPolyinPoly(userDef, map, userInput[1].value, userInput)
+        toastr.options = {
+            "closeButton": false,
+            "timeOut": 7000,
+            "positionClass": "toast-top-right",
+            "showMethod": 'slideDown',
+            "hideMethod": 'slideUp',
+            "closeMethod": 'slideUp',
+        };
+        toastr.success(`<p  style="font-family: 'Patrick Hand', cursive;">Random Polygon Data successfull</p>`);
     } else {
         toastr.options = {
             "closeButton": false,
@@ -317,9 +397,12 @@ document.getElementById("generateButton").addEventListener('click', function () 
         };
         toastr.error(`<p  style="font-family: 'Patrick Hand', cursive;">Something went wrong</p>`);
     }
+    
     document.getElementById("generateButton").classList.add('disabled')
     document.getElementById("clearButton").style.visibility = 'visible'
     document.getElementById('downloadButton').classList.remove('disabled')
+
+    
 })
 
 // select geojson properties 
