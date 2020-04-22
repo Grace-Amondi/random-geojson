@@ -159,7 +159,8 @@ function retrieveBbox(data) {
         'source': 'BBOX Layer',
         'paint': {
             'fill-color': '#81d4fa',
-            'fill-opacity': 0.5
+            'fill-opacity': 0.5,
+            'fill-outline-color':'black'
         }
     });
 
@@ -169,6 +170,7 @@ function retrieveBbox(data) {
         padding: 50,
         linear: false
     });
+    draw.deleteAll()
 
 }
 
@@ -204,7 +206,8 @@ function displayPolygonData(feature) {
             'source': 'Polygon Layer',
             'paint': {
                 'fill-color': '#81d4fa',
-                'fill-opacity': 0.5
+                'fill-opacity': 0.5,
+                'fill-outline-color':'black',
             }
         });
         var bbox = turf.extent(featureCollect);
