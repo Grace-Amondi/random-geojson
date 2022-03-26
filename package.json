@@ -29,7 +29,7 @@
     "mapbox-gl": "^1.9.1",
     "mapbox-gl-controls": "^1.6.2",
     "mapbox-gl-draw-rectangle-mode": "^1.0.4",
-    "minimist": "^1.2.5"
+    "minimist": "^1.2.6"
   },
   "devDependencies": {
     "parcel-bundler": "^1.12.4"
